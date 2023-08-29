@@ -1,3 +1,5 @@
+//! VGA screen buffer.
+
 use volatile::Volatile;
 
 use super::color::ColorCode;

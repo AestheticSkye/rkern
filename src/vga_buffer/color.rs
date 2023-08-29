@@ -1,3 +1,5 @@
+//! Color codes for text.
+
 /// The standard color palette in VGA text mode.
 #[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

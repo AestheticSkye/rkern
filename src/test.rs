@@ -1,7 +1,10 @@
+//! Systems required for building and running tests.
+
 use core::panic::PanicInfo;
 
 use crate::{serial_print, serial_println};
 
+/// Core components used for testing.
 pub mod prelude {
 	pub use crate::test::{exit_qemu, QemuExitCode};
 	pub use crate::{serial_print, serial_println};

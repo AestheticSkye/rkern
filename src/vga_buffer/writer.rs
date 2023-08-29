@@ -1,3 +1,5 @@
+//! System for writing to VGA screen.
+
 use core::fmt;
 
 use lazy_static::lazy_static;

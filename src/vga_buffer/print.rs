@@ -1,3 +1,5 @@
+//! `print` & `println` macros for the VGA buffer.
+
 use core::fmt;
 
 use crate::vga_buffer::writer::WRITER;

@@ -1,3 +1,5 @@
+//! Macros for printing to serial
+
 use crate::serial::SERIAL1;
 
 #[doc(hidden)]
