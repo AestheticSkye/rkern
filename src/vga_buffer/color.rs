@@ -1,3 +1,4 @@
+/// The standard color palette in VGA text mode.
 #[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(u8)]
@@ -20,6 +21,7 @@ pub enum Color {
 	White      = 15,
 }
 
+/// Color code that represents foreground and background color.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(transparent)]
 pub struct ColorCode(u8);

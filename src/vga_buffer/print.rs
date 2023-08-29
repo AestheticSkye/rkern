@@ -1,6 +1,6 @@
 use core::fmt;
 
-use crate::vga_buffer::WRITER;
+use crate::vga_buffer::writer::WRITER;
 
 #[macro_export]
 macro_rules! print {
