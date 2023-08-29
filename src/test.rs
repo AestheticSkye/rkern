@@ -7,6 +7,7 @@ pub mod prelude {
 	pub use crate::{serial_print, serial_println};
 }
 
+/// Adds test behavior to make any function act like a stdlib test.
 pub trait Testable {
 	fn run(&self);
 }
@@ -46,7 +47,7 @@ pub enum QemuExitCode {
 	Failed  = 0x11,
 }
 
-/// Quits QEMU and returns provided exit code
+/// Quits QEMU and returns provided exit code.
 pub fn exit_qemu(exit_code: QemuExitCode) {
 	use x86_64::instructions::port::Port;
 

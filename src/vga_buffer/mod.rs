@@ -1,10 +1,10 @@
-/// VGA screen buffer
+/// VGA screen buffer.
 mod buffer;
-/// Color codes for text
+/// Color codes for text.
 mod color;
-/// `print` & `println` macros
+/// `print` & `println` macros.
 pub mod print;
-/// System for writing to VGA screen
+/// System for writing to VGA screen.
 mod writer;
 
 #[cfg(test)]
