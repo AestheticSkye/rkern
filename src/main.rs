@@ -3,6 +3,7 @@
 #![feature(custom_test_frameworks)]
 #![test_runner(rkern::test_runner)]
 #![reexport_test_harness_main = "test_main"]
+#![warn(clippy::all, clippy::pedantic, clippy::nursery)]
 
 use core::panic::PanicInfo;
 
@@ -10,10 +11,12 @@ use rkern::prelude::*;
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-	println!("Hello World{}", "!");
+	init();
 
 	#[cfg(test)]
 	test_main();
+
+	println!("Hello World{}", "!");
 
 	#[allow(clippy::empty_loop)]
 	loop {}

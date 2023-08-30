@@ -1,9 +1,11 @@
 //! Macros for printing to serial
 
+use core::fmt::Arguments;
+
 use crate::serial::SERIAL1;
 
 #[doc(hidden)]
-pub fn _print(args: ::core::fmt::Arguments) {
+pub fn _print(args: Arguments) {
 	use core::fmt::Write;
 	SERIAL1
 		.lock()

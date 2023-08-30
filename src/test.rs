@@ -2,7 +2,7 @@
 
 use core::panic::PanicInfo;
 
-use crate::{serial_print, serial_println};
+use crate::test::prelude::*;
 
 /// Core components used for testing.
 pub mod prelude {
@@ -63,6 +63,9 @@ pub fn exit_qemu(exit_code: QemuExitCode) {
 #[cfg(test)]
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
+	use crate::init;
+
+	init();
 	crate::test_main();
 	loop {}
 }
