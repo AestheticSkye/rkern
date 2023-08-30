@@ -7,7 +7,8 @@
 #![warn(clippy::all, clippy::pedantic, clippy::nursery)]
 #![allow(clippy::module_name_repetitions)]
 
-pub mod interrupts;
+pub mod gdt;
+mod interrupts;
 pub mod serial;
 pub mod test;
 pub mod vga_buffer;
@@ -20,4 +21,7 @@ pub mod prelude {
 }
 
 /// Initializes crucial kernel systems.
-pub fn init() { interrupts::init_idt(); }
+pub fn init() {
+	gdt::init();
+	interrupts::init_idt();
+}
