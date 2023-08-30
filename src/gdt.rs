@@ -5,9 +5,12 @@ use x86_64::structures::gdt::{Descriptor, GlobalDescriptorTable, SegmentSelector
 use x86_64::structures::tss::TaskStateSegment;
 use x86_64::VirtAddr;
 
+/// Index of the stack used by Interrupt Stack Table.
+///
+/// Defaults to the first out of the 5 possible stacks.
 pub const DOUBLE_FAULT_IST_INDEX: u16 = 0;
 
-/// Initializes the GDT and TSS
+/// Initializes the GDT and TSS.
 pub fn init() {
 	use x86_64::instructions::segmentation::{Segment, CS};
 	use x86_64::instructions::tables::load_tss;
@@ -20,8 +23,7 @@ pub fn init() {
 }
 
 lazy_static! {
-	/// The Global Descriptor Table to hold the TSS,
-	/// and the corresponding Segment Selectors.
+	/// The Global Descriptor Table to hold the TSS & kernel code segment selectors.
 	static ref GDT: (GlobalDescriptorTable, Selectors) = {
 		let mut gdt = GlobalDescriptorTable::new();
 		let code_selector = gdt.add_entry(Descriptor::kernel_code_segment());
@@ -37,13 +39,19 @@ lazy_static! {
 }
 
 /// The selectors provided by the GDT
+///
+/// Used to index into specific components.
 struct Selectors {
+	/// Kernel code segment
 	code_selector: SegmentSelector,
+	/// Task State Segment
 	tss_selector:  SegmentSelector,
 }
 
 lazy_static! {
-	/// A Task State Segment to store a stack for the double fault handler.
+	/// The TSS holds information necessary for hardware task switching.
+	///
+	/// Used for hardware exceptions.
 	static ref TSS: TaskStateSegment = {
 		let mut tss = TaskStateSegment::new();
 		tss.interrupt_stack_table[DOUBLE_FAULT_IST_INDEX as usize] = {

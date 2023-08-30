@@ -6,7 +6,8 @@ use x86_64::structures::idt::{InterruptDescriptorTable, InterruptStackFrame};
 use crate::{gdt, println};
 
 lazy_static! {
-	/// Global IDT.
+	/// The Interrupt Descriptor Table used to store the different
+	/// subroutines for specific exceptions.
 	static ref IDT: InterruptDescriptorTable = {
 		let mut idt = InterruptDescriptorTable::new();
 		idt.breakpoint.set_handler_fn(breakpoint_handler);
@@ -22,13 +23,13 @@ lazy_static! {
 /// Called in `rkern::init`.
 pub fn init_idt() { IDT.load(); }
 
-/// Handles an interrupt when an it occurs.
+/// Handles a breakpoint (INT3) when it occurs.
 extern "x86-interrupt" fn breakpoint_handler(stack_frame: InterruptStackFrame) {
 	println!("EXCEPTION: BREAKPOINT\n{:#?}", stack_frame);
 }
 
-/// Handles double faults when `breakpoint_handler`
-/// can't handle the fault
+/// Handles double faults when when not
+/// picked up by another exception handler.
 extern "x86-interrupt" fn double_fault_handler(
 	stack_frame: InterruptStackFrame,
 	_error_code: u64,

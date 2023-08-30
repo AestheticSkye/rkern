@@ -9,6 +9,7 @@ use core::panic::PanicInfo;
 
 use rkern::prelude::*;
 
+#[allow(unconditional_panic)]
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
 	init();
