@@ -2,6 +2,7 @@
 
 use core::panic::PanicInfo;
 
+use crate::hlt_loop;
 use crate::test::prelude::*;
 
 /// Core components used for testing.
@@ -39,8 +40,7 @@ pub fn test_panic_handler(info: &PanicInfo) -> ! {
 	serial_println!("Error: {}\n", info);
 	exit_qemu(QemuExitCode::Failed);
 
-	#[allow(clippy::empty_loop)]
-	loop {}
+	hlt_loop();
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -67,7 +67,7 @@ pub extern "C" fn _start() -> ! {
 
 	init();
 	crate::test_main();
-	loop {}
+	hlt_loop();
 }
 
 #[cfg(test)]

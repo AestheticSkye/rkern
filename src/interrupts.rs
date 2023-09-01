@@ -1,9 +1,15 @@
 //! Interrupt handling.
 
-use lazy_static::lazy_static;
-use x86_64::structures::idt::{InterruptDescriptorTable, InterruptStackFrame};
+mod handlers;
+mod pic;
 
-use crate::{gdt, println};
+use lazy_static::lazy_static;
+use x86_64::structures::idt::InterruptDescriptorTable;
+
+use crate::gdt;
+#[allow(clippy::wildcard_imports)]
+use crate::interrupts::handlers::*;
+use crate::interrupts::pic::{InterruptIndex, PICS};
 
 lazy_static! {
 	/// The Interrupt Descriptor Table used to store the different
@@ -15,6 +21,10 @@ lazy_static! {
 			idt.double_fault.set_handler_fn(double_fault_handler)
 				.set_stack_index(gdt::DOUBLE_FAULT_IST_INDEX);
 		}
+		idt[InterruptIndex::Timer.as_usize()]
+			.set_handler_fn(timer_interrupt_handler);
+		idt[InterruptIndex::Keyboard.as_usize()]
+			.set_handler_fn(keyboard_interrupt_handler);
 		idt
 	};
 }
@@ -23,18 +33,13 @@ lazy_static! {
 /// Called in `rkern::init`.
 pub fn init_idt() { IDT.load(); }
 
-/// Handles a breakpoint (INT3) when it occurs.
-extern "x86-interrupt" fn breakpoint_handler(stack_frame: InterruptStackFrame) {
-	println!("EXCEPTION: BREAKPOINT\n{:#?}", stack_frame);
-}
-
-/// Handles double faults when when not
-/// picked up by another exception handler.
-extern "x86-interrupt" fn double_fault_handler(
-	stack_frame: InterruptStackFrame,
-	_error_code: u64,
-) -> ! {
-	panic!("EXCEPTION: DOUBLE FAULT\n{:#?}", stack_frame);
+/// Initializes the Programmable Interrupt Controller.
+/// Called in `rkern::init`.
+pub fn init_pic() {
+	unsafe {
+		PICS.lock().initialize();
+	}
+	x86_64::instructions::interrupts::enable();
 }
 
 /// Tests to see if the system can recover after an interrupt.

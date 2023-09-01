@@ -3,7 +3,6 @@
 use lazy_static::lazy_static;
 use x86_64::structures::gdt::{Descriptor, GlobalDescriptorTable, SegmentSelector};
 use x86_64::structures::tss::TaskStateSegment;
-use x86_64::VirtAddr;
 
 /// Index of the stack used by Interrupt Stack Table.
 ///
@@ -11,6 +10,7 @@ use x86_64::VirtAddr;
 pub const DOUBLE_FAULT_IST_INDEX: u16 = 0;
 
 /// Initializes the GDT and TSS.
+/// Called in `rkern::init`.
 pub fn init() {
 	use x86_64::instructions::segmentation::{Segment, CS};
 	use x86_64::instructions::tables::load_tss;
@@ -58,7 +58,7 @@ lazy_static! {
 			const STACK_SIZE: usize = 4096 * 5;
 			static mut STACK: [u8; STACK_SIZE] = [0; STACK_SIZE];
 
-			let stack_start = VirtAddr::from_ptr(unsafe { &STACK });
+			let stack_start = x86_64::VirtAddr::from_ptr(unsafe { &STACK });
 			stack_start + STACK_SIZE // stack end
 		};
 		tss

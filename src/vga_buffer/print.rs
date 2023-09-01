@@ -1,6 +1,6 @@
 //! `print` & `println` macros for the VGA buffer.
 
-use core::fmt;
+use x86_64::instructions::interrupts;
 
 use crate::vga_buffer::writer::WRITER;
 
@@ -18,7 +18,10 @@ macro_rules! println {
 }
 
 #[doc(hidden)]
-pub fn _print(args: fmt::Arguments) {
+pub fn _print(args: core::fmt::Arguments) {
 	use core::fmt::Write;
-	WRITER.lock().write_fmt(args).unwrap();
+
+	interrupts::without_interrupts(|| {
+		WRITER.lock().write_fmt(args).unwrap();
+	});
 }
