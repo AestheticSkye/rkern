@@ -9,7 +9,7 @@ use uart_16550::SerialPort;
 
 lazy_static! {
 	/// Internal serial component for for `serial_print` & `serial_println`
-	pub static ref SERIAL1: Mutex<SerialPort> = {
+	static ref SERIAL1: Mutex<SerialPort> = {
 		let mut serial_port = unsafe { SerialPort::new(0x3F8) };
 		serial_port.init();
 		Mutex::new(serial_port)

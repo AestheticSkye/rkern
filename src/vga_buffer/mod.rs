@@ -11,7 +11,6 @@ fn test_println_output() {
 
 	use x86_64::instructions::interrupts;
 
-	use crate::println;
 	use crate::vga_buffer::buffer::BUFFER_HEIGHT;
 	use crate::vga_buffer::writer::WRITER;
 

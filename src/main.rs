@@ -5,6 +5,9 @@
 #![reexport_test_harness_main = "test_main"]
 #![warn(clippy::all, clippy::pedantic, clippy::nursery)]
 
+extern crate alloc;
+
+use alloc::boxed::Box;
 use core::panic::PanicInfo;
 
 use bootloader::{entry_point, BootInfo};
@@ -13,9 +16,13 @@ use rkern::prelude::*;
 entry_point!(kernel_main);
 
 fn kernel_main(boot_info: &'static BootInfo) -> ! {
-	init();
+	init(boot_info);
 
 	println!("Hello World{} ", "!");
+
+	let x = Box::new(41);
+
+	println!("{}", *x + 1);
 
 	#[cfg(test)]
 	test_main();

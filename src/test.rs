@@ -67,10 +67,10 @@ pub fn exit_qemu(exit_code: QemuExitCode) {
 }
 
 #[cfg(test)]
-fn test_kernel_main(_boot_info: &'static BootInfo) -> ! {
+fn test_kernel_main(boot_info: &'static BootInfo) -> ! {
 	use crate::init;
 
-	init();
+	init(boot_info);
 	crate::test_main();
 	hlt_loop();
 }

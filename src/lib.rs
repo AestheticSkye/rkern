@@ -7,6 +7,7 @@
 #![warn(clippy::all, clippy::pedantic, clippy::nursery)]
 #![allow(clippy::module_name_repetitions)]
 
+pub mod allocator;
 pub mod gdt;
 mod interrupts;
 pub mod memory;
@@ -14,18 +15,27 @@ pub mod serial;
 pub mod test;
 pub mod vga_buffer;
 
+extern crate alloc;
+
+use bootloader::BootInfo;
 pub use test::{test_panic_handler, test_runner};
 
 /// Core internal components of the kernel.
 pub mod prelude {
+	pub use alloc::boxed::Box;
+	pub use alloc::string::String;
+	pub use alloc::vec;
+	pub use alloc::vec::Vec;
+
 	pub use crate::{hlt_loop, init, print, println};
 }
 
 /// Initializes crucial kernel systems.
-pub fn init() {
+pub fn init(boot_info: &'static BootInfo) {
 	gdt::init();
 	interrupts::init_idt();
 	interrupts::init_pic();
+	allocator::init_allocator(boot_info);
 }
 
 /// Halts the currently running function.
