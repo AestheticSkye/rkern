@@ -7,16 +7,18 @@
 
 use core::panic::PanicInfo;
 
+use bootloader::{entry_point, BootInfo};
 use rkern::prelude::*;
 
-#[no_mangle]
-pub extern "C" fn _start() -> ! {
+entry_point!(kernel_main);
+
+fn kernel_main(boot_info: &'static BootInfo) -> ! {
 	init();
+
+	println!("Hello World{} ", "!");
 
 	#[cfg(test)]
 	test_main();
-
-	println!("Hello World{} ", "!");
 
 	hlt_loop();
 }

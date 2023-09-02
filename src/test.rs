@@ -2,8 +2,14 @@
 
 use core::panic::PanicInfo;
 
+#[cfg(test)]
+use bootloader::{entry_point, BootInfo};
+
 use crate::hlt_loop;
 use crate::test::prelude::*;
+
+#[cfg(test)]
+entry_point!(test_kernel_main);
 
 /// Core components used for testing.
 pub mod prelude {
@@ -61,8 +67,7 @@ pub fn exit_qemu(exit_code: QemuExitCode) {
 }
 
 #[cfg(test)]
-#[no_mangle]
-pub extern "C" fn _start() -> ! {
+fn test_kernel_main(_boot_info: &'static BootInfo) -> ! {
 	use crate::init;
 
 	init();
