@@ -1,3 +1,5 @@
+//! Direct interaction with the memory map provided by the kernel.
+
 use x86_64::structures::paging::{OffsetPageTable, PageTable};
 use x86_64::VirtAddr;
 

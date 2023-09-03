@@ -1,3 +1,5 @@
+//! Heap memory allocation.
+
 use bootloader::BootInfo;
 use linked_list_allocator::LockedHeap;
 use x86_64::structures::paging::mapper::MapToError;
@@ -10,7 +12,9 @@ use crate::memory::frame_allocator::BootInfoFrameAllocator;
 #[global_allocator]
 static ALLOCATOR: LockedHeap = LockedHeap::empty();
 
+/// The starting virtual address for the heap.
 pub const HEAP_START: usize = 0x_4444_4444_0000;
+/// Total size for the heap.
 pub const HEAP_SIZE: usize = 100 * 1024; // 100 KiB
 
 /// Initializes the systems allocator.
