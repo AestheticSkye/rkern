@@ -1,21 +1,32 @@
 //! Heap memory allocation.
 
+pub mod fixed_size_block;
+
 use bootloader::BootInfo;
-use linked_list_allocator::LockedHeap;
 use x86_64::structures::paging::mapper::MapToError;
 use x86_64::structures::paging::{FrameAllocator, Mapper, Page, PageTableFlags, Size4KiB};
 use x86_64::VirtAddr;
 
+use self::fixed_size_block::FixedSizeBlockAllocator;
 use crate::memory;
 use crate::memory::frame_allocator::BootInfoFrameAllocator;
 
 #[global_allocator]
-static ALLOCATOR: LockedHeap = LockedHeap::empty();
+static ALLOCATOR: Locked<FixedSizeBlockAllocator> = Locked::new(FixedSizeBlockAllocator::new());
 
 /// The starting virtual address for the heap.
 pub const HEAP_START: usize = 0x_4444_4444_0000;
 /// Total size for the heap.
 pub const HEAP_SIZE: usize = 100 * 1024; // 100 KiB
+
+/// A wrapper of a mutex that we can implement the `GlobalAlloc` trait to
+pub struct Locked<A>(spin::Mutex<A>);
+
+impl<A> Locked<A> {
+	pub const fn new(inner: A) -> Self { Self(spin::Mutex::new(inner)) }
+
+	pub fn lock(&self) -> spin::MutexGuard<A> { self.0.lock() }
+}
 
 /// Initializes the systems allocator.
 ///
