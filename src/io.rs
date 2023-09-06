@@ -22,6 +22,17 @@ pub fn stdin_push(char: char) {
 	});
 }
 
+#[must_use]
+pub fn stdin_backspace() -> bool {
+	let mut buffer_empty = false;
+	interrupts::without_interrupts(|| {
+		let mut stdin = STDIN.lock();
+
+		buffer_empty = stdin.pop().is_none();
+	});
+	!buffer_empty
+}
+
 /// Read line from STDIN.
 ///
 /// Returns string up to new line, or waits until newline is received.

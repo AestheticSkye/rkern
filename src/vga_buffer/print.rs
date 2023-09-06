@@ -25,3 +25,9 @@ pub fn _print(args: core::fmt::Arguments) {
 		WRITER.lock().write_fmt(args).unwrap();
 	});
 }
+
+pub fn backspace() {
+	interrupts::without_interrupts(|| {
+		WRITER.lock().backspace();
+	});
+}
