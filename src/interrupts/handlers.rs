@@ -1,6 +1,7 @@
 use x86_64::structures::idt::{InterruptStackFrame, PageFaultErrorCode};
 
 use crate::interrupts::pic::{InterruptIndex, PICS};
+use crate::io::stdin_push;
 use crate::prelude::*;
 
 /// Handles page fault exceptions.
@@ -40,8 +41,11 @@ pub extern "x86-interrupt" fn keyboard_interrupt_handler(_stack_frame: Interrupt
 	if let Ok(Some(key_event)) = keyboard.add_byte(scancode) {
 		if let Some(key) = keyboard.process_keyevent(key_event) {
 			match key {
-				DecodedKey::RawKey(key) => print!("{:?}", key),
-				DecodedKey::Unicode(character) => print!("{}", character),
+				DecodedKey::RawKey(_) => {}
+				DecodedKey::Unicode(character) => {
+					stdin_push(character);
+					print!("{}", character);
+				}
 			}
 		}
 	}

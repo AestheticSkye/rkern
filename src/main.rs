@@ -11,20 +11,19 @@ use core::panic::PanicInfo;
 
 use bootloader::{entry_point, BootInfo};
 use rkern::prelude::*;
+use rkern::shell::run_shell;
 
 entry_point!(kernel_main);
 
 fn kernel_main(boot_info: &'static BootInfo) -> ! {
 	init(boot_info);
 
-	println!("Hello World{} ", "!");
-
-	let x = Box::new(41);
-
-	println!("{}", *x + 1);
+	println!("Hello World!");
 
 	#[cfg(test)]
 	test_main();
+
+	run_shell();
 
 	hlt_loop();
 }

@@ -9,10 +9,13 @@
 #![allow(clippy::module_name_repetitions)]
 
 pub mod allocator;
+mod fs;
 pub mod gdt;
 mod interrupts;
+pub mod io;
 pub mod memory;
 pub mod serial;
+pub mod shell;
 pub mod test;
 pub mod vga_buffer;
 
@@ -28,6 +31,7 @@ pub mod prelude {
 	pub use alloc::vec;
 	pub use alloc::vec::Vec;
 
+	pub use crate::io::read_line;
 	pub use crate::{hlt_loop, init, print, println};
 }
 
