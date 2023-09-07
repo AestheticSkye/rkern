@@ -67,16 +67,19 @@ impl Writer {
 		}
 	}
 
-	/// Moves the curser back one and removes last character
+	/// Moves the curser back one and removes last character.
 	pub fn backspace(&mut self) {
 		if self.column_position > 0 {
 			self.column_position -= 1;
 			self.buffer.chars[BUFFER_HEIGHT - 1][self.column_position].write(ScreenChar {
-				ascii_character: 0,
+				ascii_character: b' ',
 				color_code:      self.color_code,
 			});
 		}
 	}
+
+	/// Clears the entire screen.
+	pub fn clear(&mut self) { (0..BUFFER_HEIGHT).for_each(|row| self.clear_row(row)) }
 
 	/// Shifts all lines one line up and clears the last row.
 	fn new_line(&mut self) {

@@ -1,3 +1,5 @@
+//! Root for core kernel systems.
+
 #![no_std]
 #![cfg_attr(test, no_main)]
 #![feature(custom_test_frameworks)]
@@ -6,6 +8,7 @@
 #![test_runner(crate::test::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 #![warn(clippy::all, clippy::pedantic, clippy::nursery)]
+#![warn(missing_docs)]
 #![allow(clippy::module_name_repetitions)]
 
 pub mod allocator;

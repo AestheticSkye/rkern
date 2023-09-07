@@ -1,3 +1,6 @@
+//! A basic fixed-sized block allocator with backup linked list allocator.
+//! Intended to be used with `#[global_allocator]`
+
 use alloc::alloc::GlobalAlloc;
 use core::alloc::Layout;
 use core::ptr::NonNull;

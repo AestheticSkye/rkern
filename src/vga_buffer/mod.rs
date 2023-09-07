@@ -1,9 +1,27 @@
 //! Interaction with the VGA display buffer.
 
+use x86_64::instructions::interrupts;
+
+use self::writer::WRITER;
+
 mod buffer;
 mod color;
 pub mod print;
 mod writer;
+
+/// Moves the curser back one and removes last character.
+pub fn backspace() {
+	interrupts::without_interrupts(|| {
+		WRITER.lock().backspace();
+	});
+}
+
+/// Clears the entire screen.
+pub fn clear() {
+	interrupts::without_interrupts(|| {
+		WRITER.lock().clear();
+	});
+}
 
 #[test_case]
 fn test_println_output() {

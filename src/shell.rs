@@ -1,14 +1,29 @@
 //! A basic shell with some simple commands
 
+mod clear;
 mod echo;
+mod history;
 
-use alloc::string::ToString;
+use alloc::borrow::ToOwned;
+
+use lazy_static::lazy_static;
+use spin::Mutex;
 
 use crate::prelude::*;
+use crate::shell::clear::clear;
 use crate::shell::echo::echo;
+use crate::shell::history::history;
 
-type Program = Box<dyn Fn(&[String])>;
+type Program = Box<dyn Fn(&[&str])>;
 
+lazy_static! {
+	/// Todo: eventually replace this with a history file.
+	static ref HISTORY: Mutex<Vec<String>> = Mutex::new(Vec::new());
+}
+
+/// Start running the systems shell.
+///
+/// Todo: when file system is implemented, make this into its own program.
 pub fn run_shell() {
 	loop {
 		let mut command = String::new();
@@ -17,25 +32,32 @@ pub fn run_shell() {
 
 		read_line(&mut command);
 
-		let arguments = command
-			.split_whitespace()
-			.map(ToString::to_string)
-			.collect::<Vec<String>>();
+		let arguments = command.split_whitespace().collect::<Vec<&str>>();
 
-		find_program(&arguments[0]).map_or_else(
+		if arguments.is_empty() {
+			continue;
+		}
+
+		find_program(arguments[0]).map_or_else(
 			|| {
 				println!("Unknown command: {}", arguments[0]);
 			},
 			|program| {
-				program(&arguments[1..]);
+				program(&arguments);
 			},
 		);
+
+		add_to_history(&command);
 	}
 }
+
+fn add_to_history(command: &str) { HISTORY.lock().push(command.to_owned()); }
 
 fn find_program(command_name: &str) -> Option<Program> {
 	match command_name {
 		"echo" => Some(Box::new(echo)),
+		"clear" => Some(Box::new(clear)),
+		"history" => Some(Box::new(history)),
 		_ => None,
 	}
 }

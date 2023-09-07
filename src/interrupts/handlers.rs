@@ -3,7 +3,6 @@ use x86_64::structures::idt::{InterruptStackFrame, PageFaultErrorCode};
 use crate::interrupts::pic::{InterruptIndex, PICS};
 use crate::io::{stdin_backspace, stdin_push};
 use crate::prelude::*;
-use crate::vga_buffer::print::backspace;
 
 /// Handles page fault exceptions.
 pub extern "x86-interrupt" fn page_fault_handler(
@@ -44,8 +43,8 @@ pub extern "x86-interrupt" fn keyboard_interrupt_handler(_stack_frame: Interrupt
 			match key {
 				DecodedKey::RawKey(_) => {}
 				DecodedKey::Unicode(_character @ '\x08') => {
-					if stdin_backspace() {
-						backspace();
+					if stdin_backspace().is_some() {
+						crate::vga_buffer::backspace();
 					}
 				}
 				DecodedKey::Unicode(character) => {

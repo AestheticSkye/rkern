@@ -23,8 +23,10 @@ pub const HEAP_SIZE: usize = 100 * 1024; // 100 KiB
 pub struct Locked<A>(spin::Mutex<A>);
 
 impl<A> Locked<A> {
+	/// Generates new lockable structure with inner data.
 	pub const fn new(inner: A) -> Self { Self(spin::Mutex::new(inner)) }
 
+	/// Locks structure and allows mutable access to inner data.
 	pub fn lock(&self) -> spin::MutexGuard<A> { self.0.lock() }
 }
 

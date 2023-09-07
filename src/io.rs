@@ -22,15 +22,16 @@ pub fn stdin_push(char: char) {
 	});
 }
 
-#[must_use]
-pub fn stdin_backspace() -> bool {
-	let mut buffer_empty = false;
+/// Remove a character from the buffer and return it.
+#[allow(clippy::must_use_candidate)]
+pub fn stdin_backspace() -> Option<char> {
+	let mut char = None;
 	interrupts::without_interrupts(|| {
 		let mut stdin = STDIN.lock();
 
-		buffer_empty = stdin.pop().is_none();
+		char = stdin.pop();
 	});
-	!buffer_empty
+	char
 }
 
 /// Read line from STDIN.

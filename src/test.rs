@@ -1,5 +1,7 @@
 //! Systems required for building and running tests.
 
+#![allow(missing_docs)]
+
 use core::panic::PanicInfo;
 
 #[cfg(test)]
