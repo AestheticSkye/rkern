@@ -19,7 +19,7 @@ pub const HEAP_START: usize = 0x_4444_4444_0000;
 /// Total size for the heap.
 pub const HEAP_SIZE: usize = 100 * 1024; // 100 KiB
 
-/// A wrapper of a mutex that we can implement the `GlobalAlloc` trait to
+/// A wrapper of a mutex that we can implement the `GlobalAlloc` trait to.
 pub struct Locked<A>(spin::Mutex<A>);
 
 impl<A> Locked<A> {
@@ -37,6 +37,7 @@ impl<A> Locked<A> {
 /// Panics if:
 ///
 /// A. The frame allocator runs our of frames.
+///
 /// B. The mapper fails.
 pub(super) fn init_allocator(boot_info: &'static BootInfo) {
 	let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset);
@@ -53,6 +54,7 @@ pub(super) fn init_allocator(boot_info: &'static BootInfo) {
 /// This function will return an error if:
 ///
 /// A. The frame allocator runs our of frames.
+///
 /// B. The mapper fails.
 fn init_heap(
 	mapper: &mut impl Mapper<Size4KiB>,
@@ -75,7 +77,7 @@ fn init_heap(
 	}
 
 	unsafe {
-		ALLOCATOR.lock().init(HEAP_START, HEAP_SIZE);
+		ALLOCATOR.lock().init(HEAP_START as *mut u8, HEAP_SIZE);
 	}
 
 	Ok(())
