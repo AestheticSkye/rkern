@@ -2,23 +2,22 @@
 
 use core::fmt;
 
-use lazy_static::lazy_static;
-use spin::Mutex;
+use spin::{Lazy, Mutex};
 
 use super::buffer::{Buffer, ScreenChar, BUFFER_HEIGHT, BUFFER_WIDTH};
 use super::color::ColorCode;
 use crate::vga_buffer::color::Color;
 
-lazy_static! {
-    /// A global `Writer` instance that can be used for printing to the VGA text buffer.
-    ///
-    /// Used by the `print!` and `println!` macros.
-    pub static ref WRITER: Mutex<Writer> = Mutex::new(Writer {
+/// A global `Writer` instance that can be used for printing to the VGA text buffer.
+///
+/// Used by the `print!` and `println!` macros.
+pub static WRITER: Lazy<Mutex<Writer>> = Lazy::new(|| {
+    Mutex::new(Writer {
         column_position: 0,
         color_code:      ColorCode::new(Color::Yellow, Color::Black),
         buffer:          unsafe { &mut *(0xb8000 as *mut Buffer) },
-    });
-}
+    })
+});
 
 /// A writer type that allows writing ASCII bytes and strings to an underlying `Buffer`.
 ///

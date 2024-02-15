@@ -1,6 +1,7 @@
 //! Systems relating to hardware interrupts using the pic 8259.
 
 use pic8259::ChainedPics;
+use spin::Mutex;
 
 pub const PIC_1_OFFSET: u8 = 32;
 pub const PIC_2_OFFSET: u8 = PIC_1_OFFSET + 8;
@@ -9,8 +10,8 @@ pub const PIC_2_OFFSET: u8 = PIC_1_OFFSET + 8;
 ///
 /// Used to notify the CPU & kernel of interrupts
 /// coming from separate hardware components.
-pub static PICS: spin::Mutex<ChainedPics> =
-    spin::Mutex::new(unsafe { ChainedPics::new(PIC_1_OFFSET, PIC_2_OFFSET) });
+pub static PICS: Mutex<ChainedPics> =
+    Mutex::new(unsafe { ChainedPics::new(PIC_1_OFFSET, PIC_2_OFFSET) });
 
 /// Index within the PIC the
 /// certain interrupt is contained.

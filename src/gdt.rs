@@ -2,8 +2,7 @@
 
 use core::ptr::addr_of;
 
-use lazy_static::lazy_static;
-use once_cell::sync::Lazy;
+use spin::Lazy;
 use x86_64::structures::gdt::{Descriptor, GlobalDescriptorTable, SegmentSelector};
 use x86_64::structures::tss::TaskStateSegment;
 
@@ -25,21 +24,18 @@ pub fn init() {
     }
 }
 
-lazy_static! {
-    /// The Global Descriptor Table to hold the TSS & kernel code segment selectors.
-    static ref GDT: (GlobalDescriptorTable, Selectors) = {
-        let mut gdt = GlobalDescriptorTable::new();
-        let code_selector = gdt.add_entry(Descriptor::kernel_code_segment());
-        let tss_selector = gdt.add_entry(Descriptor::tss_segment(&TSS));
-        (
-            gdt,
-            Selectors {
-                code_selector,
-                tss_selector,
-            },
-        )
-    };
-}
+static GDT: Lazy<(GlobalDescriptorTable, Selectors)> = Lazy::new(|| {
+    let mut gdt = GlobalDescriptorTable::new();
+    let code_selector = gdt.add_entry(Descriptor::kernel_code_segment());
+    let tss_selector = gdt.add_entry(Descriptor::tss_segment(&TSS));
+    (
+        gdt,
+        Selectors {
+            code_selector,
+            tss_selector,
+        },
+    )
+});
 
 /// The selectors provided by the GDT
 ///
@@ -51,19 +47,17 @@ struct Selectors {
     tss_selector:  SegmentSelector,
 }
 
-lazy_static! {
-    /// The TSS holds information necessary for hardware task switching.
-    ///
-    /// Used for hardware exceptions.
-    static ref TSS: TaskStateSegment = {
-        let mut tss = TaskStateSegment::new();
-        tss.interrupt_stack_table[DOUBLE_FAULT_IST_INDEX as usize] = {
-            const STACK_SIZE: usize = 4096 * 5;
-            static mut STACK: [u8; STACK_SIZE] = [0; STACK_SIZE];
+/// The TSS holds information necessary for hardware task switching.
+///
+/// Used for hardware exceptions.
+static TSS: Lazy<TaskStateSegment> = Lazy::new(|| {
+    let mut tss = TaskStateSegment::new();
+    tss.interrupt_stack_table[DOUBLE_FAULT_IST_INDEX as usize] = {
+        const STACK_SIZE: usize = 4096 * 5;
+        static mut STACK: [u8; STACK_SIZE] = [0; STACK_SIZE];
 
-            let stack_start = x86_64::VirtAddr::from_ptr(unsafe { addr_of!(STACK) });
-            stack_start + STACK_SIZE // stack end
-        };
-        tss
+        let stack_start = x86_64::VirtAddr::from_ptr(unsafe { addr_of!(STACK) });
+        stack_start + STACK_SIZE // stack end
     };
-}
+    tss
+});

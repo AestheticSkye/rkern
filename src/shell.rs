@@ -6,8 +6,7 @@ mod history;
 
 use alloc::borrow::ToOwned;
 
-use lazy_static::lazy_static;
-use spin::Mutex;
+use spin::{Lazy, Mutex};
 
 use crate::prelude::*;
 use crate::shell::clear::clear;
@@ -16,10 +15,8 @@ use crate::shell::history::history;
 
 type Program = Box<dyn Fn(&[&str])>;
 
-lazy_static! {
-    /// Todo: eventually replace this with a history file.
-    static ref HISTORY: Mutex<Vec<String>> = Mutex::new(Vec::new());
-}
+/// Todo: eventually replace this with a history file.
+static HISTORY: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(Vec::new()));
 
 /// Start running the systems shell.
 ///

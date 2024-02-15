@@ -3,13 +3,10 @@
 use alloc::string::{String, ToString};
 use alloc::sync::Arc;
 
-use lazy_static::lazy_static;
-use spin::Mutex;
+use spin::{Lazy, Mutex};
 use x86_64::instructions::{hlt, interrupts};
 
-lazy_static! {
-    static ref STDIN: Arc<Mutex<String>> = Arc::new(Mutex::new(String::new()));
-}
+static STDIN: Lazy<Arc<Mutex<String>>> = Lazy::new(|| Arc::new(Mutex::new(String::new())));
 
 /// Push a single character onto STDIN
 pub fn stdin_push(char: char) {
