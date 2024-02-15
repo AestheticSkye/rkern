@@ -10,9 +10,9 @@ use rkern::println;
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-	test_main();
+    test_main();
 
-	loop {}
+    loop {}
 }
 
 #[panic_handler]
@@ -20,5 +20,5 @@ fn panic(info: &PanicInfo) -> ! { rkern::test_panic_handler(info) }
 
 #[test_case]
 fn test_println() {
-	println!("test_println output");
+    println!("test_println output");
 }

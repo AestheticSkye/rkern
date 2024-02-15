@@ -16,23 +16,23 @@ use rkern::shell::run_shell;
 entry_point!(kernel_main);
 
 fn kernel_main(boot_info: &'static BootInfo) -> ! {
-	init(boot_info);
+    init(boot_info);
 
-	println!("Hello World!");
+    println!("Hello World!");
 
-	#[cfg(test)]
-	test_main();
+    #[cfg(test)]
+    test_main();
 
-	run_shell();
+    run_shell();
 
-	hlt_loop();
+    hlt_loop();
 }
 
 #[cfg(not(test))]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
-	println!("{}", info);
-	hlt_loop();
+    println!("{}", info);
+    hlt_loop();
 }
 
 #[cfg(test)]

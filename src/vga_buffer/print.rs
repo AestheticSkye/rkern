@@ -19,9 +19,9 @@ macro_rules! println {
 
 #[doc(hidden)]
 pub fn _print(args: core::fmt::Arguments) {
-	use core::fmt::Write;
+    use core::fmt::Write;
 
-	interrupts::without_interrupts(|| {
-		WRITER.lock().write_fmt(args).unwrap();
-	});
+    interrupts::without_interrupts(|| {
+        WRITER.lock().write_fmt(args).unwrap();
+    });
 }

@@ -23,11 +23,11 @@ pub const HEAP_SIZE: usize = 100 * 1024; // 100 KiB
 pub struct Locked<A>(spin::Mutex<A>);
 
 impl<A> Locked<A> {
-	/// Generates new lockable structure with inner data.
-	pub const fn new(inner: A) -> Self { Self(spin::Mutex::new(inner)) }
+    /// Generates new lockable structure with inner data.
+    pub const fn new(inner: A) -> Self { Self(spin::Mutex::new(inner)) }
 
-	/// Locks structure and allows mutable access to inner data.
-	pub fn lock(&self) -> spin::MutexGuard<A> { self.0.lock() }
+    /// Locks structure and allows mutable access to inner data.
+    pub fn lock(&self) -> spin::MutexGuard<A> { self.0.lock() }
 }
 
 /// Initializes the systems allocator.
@@ -40,11 +40,11 @@ impl<A> Locked<A> {
 ///
 /// B. The mapper fails.
 pub(super) fn init_allocator(boot_info: &'static BootInfo) {
-	let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset);
-	let mut mapper = unsafe { memory::init(phys_mem_offset) };
-	let mut frame_allocator = unsafe { BootInfoFrameAllocator::init(&boot_info.memory_map) };
+    let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset);
+    let mut mapper = unsafe { memory::init(phys_mem_offset) };
+    let mut frame_allocator = unsafe { BootInfoFrameAllocator::init(&boot_info.memory_map) };
 
-	init_heap(&mut mapper, &mut frame_allocator).expect("heap initialization failed");
+    init_heap(&mut mapper, &mut frame_allocator).expect("heap initialization failed");
 }
 
 /// Initializes the kernels heap.
@@ -57,28 +57,28 @@ pub(super) fn init_allocator(boot_info: &'static BootInfo) {
 ///
 /// B. The mapper fails.
 fn init_heap(
-	mapper: &mut impl Mapper<Size4KiB>,
-	frame_allocator: &mut impl FrameAllocator<Size4KiB>,
+    mapper: &mut impl Mapper<Size4KiB>,
+    frame_allocator: &mut impl FrameAllocator<Size4KiB>,
 ) -> Result<(), MapToError<Size4KiB>> {
-	let page_range = {
-		let heap_start = VirtAddr::new(HEAP_START as u64);
-		let heap_end = heap_start + HEAP_SIZE - 1u64; // Inclusive range
-		let heap_start_page = Page::containing_address(heap_start);
-		let heap_end_page = Page::containing_address(heap_end);
-		Page::range_inclusive(heap_start_page, heap_end_page)
-	};
+    let page_range = {
+        let heap_start = VirtAddr::new(HEAP_START as u64);
+        let heap_end = heap_start + HEAP_SIZE - 1u64; // Inclusive range
+        let heap_start_page = Page::containing_address(heap_start);
+        let heap_end_page = Page::containing_address(heap_end);
+        Page::range_inclusive(heap_start_page, heap_end_page)
+    };
 
-	for page in page_range {
-		let frame = frame_allocator
-			.allocate_frame()
-			.ok_or(MapToError::FrameAllocationFailed)?;
-		let flags = PageTableFlags::PRESENT | PageTableFlags::WRITABLE;
-		unsafe { mapper.map_to(page, frame, flags, frame_allocator)?.flush() };
-	}
+    for page in page_range {
+        let frame = frame_allocator
+            .allocate_frame()
+            .ok_or(MapToError::FrameAllocationFailed)?;
+        let flags = PageTableFlags::PRESENT | PageTableFlags::WRITABLE;
+        unsafe { mapper.map_to(page, frame, flags, frame_allocator)?.flush() };
+    }
 
-	unsafe {
-		ALLOCATOR.lock().init(HEAP_START as *mut u8, HEAP_SIZE);
-	}
+    unsafe {
+        ALLOCATOR.lock().init(HEAP_START as *mut u8, HEAP_SIZE);
+    }
 
-	Ok(())
+    Ok(())
 }

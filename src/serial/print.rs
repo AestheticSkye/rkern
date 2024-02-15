@@ -4,16 +4,16 @@ use crate::serial::SERIAL1;
 
 #[doc(hidden)]
 pub fn _print(args: core::fmt::Arguments) {
-	use core::fmt::Write;
+    use core::fmt::Write;
 
-	use x86_64::instructions::interrupts;
+    use x86_64::instructions::interrupts;
 
-	interrupts::without_interrupts(|| {
-		SERIAL1
-			.lock()
-			.write_fmt(args)
-			.expect("Printing to serial failed");
-	});
+    interrupts::without_interrupts(|| {
+        SERIAL1
+            .lock()
+            .write_fmt(args)
+            .expect("Printing to serial failed");
+    });
 }
 
 /// Prints to the host through the serial interface.

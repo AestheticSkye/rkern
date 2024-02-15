@@ -29,27 +29,27 @@ pub use test::{test_panic_handler, test_runner};
 
 /// Core internal components of the kernel.
 pub mod prelude {
-	pub use alloc::boxed::Box;
-	pub use alloc::string::String;
-	pub use alloc::vec;
-	pub use alloc::vec::Vec;
+    pub use alloc::boxed::Box;
+    pub use alloc::string::String;
+    pub use alloc::vec;
+    pub use alloc::vec::Vec;
 
-	pub use crate::io::read_line;
-	pub use crate::{hlt_loop, init, print, println};
+    pub use crate::io::read_line;
+    pub use crate::{hlt_loop, init, print, println};
 }
 
 /// Initializes crucial kernel systems.
 pub fn init(boot_info: &'static BootInfo) {
-	gdt::init();
-	interrupts::init_idt();
-	interrupts::init_pic();
-	allocator::init_allocator(boot_info);
+    gdt::init();
+    interrupts::init_idt();
+    interrupts::init_pic();
+    allocator::init_allocator(boot_info);
 }
 
 /// Halts the currently running function.
 /// Used to set the system into a sleep state after running.
 pub fn hlt_loop() -> ! {
-	loop {
-		x86_64::instructions::hlt();
-	}
+    loop {
+        x86_64::instructions::hlt();
+    }
 }
